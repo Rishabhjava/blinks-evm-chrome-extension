@@ -29,14 +29,20 @@ const walletHandlers = {
       return accounts[0];
     },
     sign: async (serializedTx: `0x${string}`) => {
+      console.log("signing", serializedTx);
       const tx = parseTransaction(serializedTx);
+      console.log("tx", tx);
       const transactionParameters = {
         from: connectedAddress,
         to: tx.to,
-        value: tx.value,
-        data: tx.data,
+        value: tx.value ? "0x" + tx.value.toString(16) : undefined, // Convert BigInt to hex string
+        data: tx.data ? tx.data : undefined, // Ensure data is defined
+        gas: tx.gas ? "0x" + tx.gas.toString(16) : undefined, // Include gas limit
+        gasPrice: tx.gasPrice ? "0x" + tx.gasPrice.toString(16) : undefined, // Include gas price
+        nonce: tx.nonce ? "0x" + tx.nonce.toString(16) : undefined, // Include nonce
+        chainId: tx.chainId, // MetaMask will handle chainId
       };
-
+      console.log("transactionParameters", transactionParameters);
       return window.ethereum.request({
         method: "eth_sendTransaction",
         params: [transactionParameters],
@@ -103,9 +109,7 @@ const messageHandlers = {
     transaction: `0x${string}`;
     chain: string;
   }) => {
-    if (!connectedAddress) {
-      connectedAddress = await walletHandlers.ethereum.connect(data.chain);
-    }
+    connectedAddress = await walletHandlers.ethereum.connect(data.chain);
     const txHash = await walletHandlers.ethereum.sign(data.transaction);
     return { type: "TRANSACTION_SIGNED", txHash };
   },

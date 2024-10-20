@@ -1,6 +1,7 @@
 import "@dialectlabs/blinks/index.css";
-import { SolanaActionAdapter, StarknetActionAdapter } from "./adapters";
+import { SolanaActionAdapter, StarknetActionAdapter, EthereumAdapter } from "./adapters";
 import { ObserverOptions, setupTwitterObserver } from "./twitterObserver";
+import { ActionAdapter } from "@dialectlabs/blinks";
 
 import "./index.css";
 
